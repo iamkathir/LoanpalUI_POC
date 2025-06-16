@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Best Bank Loan Credit Engine</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <style>
+    body { background: #f8f9fa; }
+    .container { max-width: 650px; margin-top: 40px; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #0001; padding: 30px; }
+    .form-label { font-weight: 500; }
+    .form-check-label { font-weight: 400; }
+    .result-box { background: #f4f4f4; border-radius: 8px; padding: 16px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2 class="mb-4 text-center">Best Bank Loan Credit Engine</h2>
+    <form id="loanForm">
+      <div class="mb-3">
+        <label class="form-label">Name</label>
+        <input name="name" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Type of Loan</label>
+        <input name="type_of_loan" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Address</label>
+        <input name="address" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Loan Amount</label>
+        <input name="loan_amount" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Date</label>
+        <input name="date" type="date" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Employment Type</label>
+        <select name="employment_type" class="form-select" required>
+          <option value="">Select Employment Type</option>
+          <option value="Salaried">Salaried</option>
+          <option value="Self-Employed">Self-Employed</option>
+        </select>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Monthly Income</label>
+        <input name="monthly_income" type="number" class="form-control" required />
+      </div>
+      <div class="form-check mb-3">
+        <input name="existing_loan" type="checkbox" class="form-check-input" id="existingLoanCheck" />
+        <label class="form-check-label" for="existingLoanCheck">Existing Loan</label>
+      </div>
+      <div class="mb-3" id="existingLoanAmountDiv" style="display:none;">
+        <label class="form-label">Existing Loan Amount</label>
+        <input name="existing_loan_amount" type="number" class="form-control" />
+      </div>
+      <div class="form-check mb-3">
+        <input name="has_coapplicant" type="checkbox" class="form-check-input" id="hasCoapplicantCheck" />
+        <label class="form-check-label" for="hasCoapplicantCheck">Co-applicant</label>
+      </div>
+      <div id="coapplicantFields" style="display:none;">
+        <div class="mb-3">
+          <label class="form-label">Co-applicant Monthly Income</label>
+          <input name="coapplicant_monthly_income" type="number" class="form-control" />
+        </div>
+        <div class="form-check mb-3">
+          <input name="coapplicant_existing_loan" type="checkbox" class="form-check-input" id="coapplicantExistingLoanCheck" />
+          <label class="form-check-label" for="coapplicantExistingLoanCheck">Co-applicant has Existing Loan</label>
+        </div>
+        <div class="mb-3" id="coapplicantExistingLoanAmountDiv" style="display:none;">
+          <label class="form-label">Co-applicant Existing Loan Amount</label>
+          <input name="coapplicant_existing_loan_amount" type="number" class="form-control" />
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary w-100">Get Recommendation</button>
+    </form>
+    <div id="result" class="result-box"></div>
+  </div>
+  <script>
+    $(function() {
+      $("input[name='existing_loan']").on('change', function() {
+        if ($(this).is(':checked')) {
+          $('#existingLoanAmountDiv').show();
+          $("input[name='existing_loan_amount']").attr('required', true);
+        } else {
+          $('#existingLoanAmountDiv').hide();
+          $("input[name='existing_loan_amount']").val('').removeAttr('required');
+        }
+      });
+      $("input[name='has_coapplicant']").on('change', function() {
+        if ($(this).is(':checked')) {
+          $('#coapplicantFields').show();
+          $("input[name='coapplicant_monthly_income']").attr('required', true);
+        } else {
+          $('#coapplicantFields').hide();
+          $("input[name='coapplicant_monthly_income']").val('').removeAttr('required');
+          $("input[name='coapplicant_existing_loan']").prop('checked', false);
+          $('#coapplicantExistingLoanAmountDiv').hide();
+          $("input[name='coapplicant_existing_loan_amount']").val('').removeAttr('required');
+        }
+      });
+      $("input[name='coapplicant_existing_loan']").on('change', function() {
+        if ($(this).is(':checked')) {
+          $('#coapplicantExistingLoanAmountDiv').show();
+          $("input[name='coapplicant_existing_loan_amount']").attr('required', true);
+        } else {
+          $('#coapplicantExistingLoanAmountDiv').hide();
+          $("input[name='coapplicant_existing_loan_amount']").val('').removeAttr('required');
+        }
+      });
+      $('#loanForm').on('submit', function(e) {
+        e.preventDefault();
+        var form = $(this).serializeArray();
+        var data = { user_profile: {} };
+        form.forEach(function(item) {
+          if (item.name === 'existing_loan') {
+            data.user_profile[item.name] = true;
+          } else if (item.name === 'has_coapplicant') {
+            data.user_profile[item.name] = true;
+          } else if (item.name === 'coapplicant_existing_loan') {
+            data.user_profile[item.name] = true;
+          } else {
+            data.user_profile[item.name] = item.value;
+          }
+        });
+        if (!data.user_profile['existing_loan']) {
+          data.user_profile['existing_loan'] = false;
+          data.user_profile['existing_loan_amount'] = 0;
+        } else {
+          data.user_profile['existing_loan_amount'] = Number(data.user_profile['existing_loan_amount']);
+        }
+        data.user_profile['monthly_income'] = Number(data.user_profile['monthly_income']);
+        if (!data.user_profile['has_coapplicant']) {
+          data.user_profile['has_coapplicant'] = false;
+          data.user_profile['coapplicant_monthly_income'] = 0;
+          data.user_profile['coapplicant_existing_loan'] = false;
+          data.user_profile['coapplicant_existing_loan_amount'] = 0;
+        } else {
+          data.user_profile['coapplicant_monthly_income'] = Number(data.user_profile['coapplicant_monthly_income']);
+          if (!data.user_profile['coapplicant_existing_loan']) {
+            data.user_profile['coapplicant_existing_loan'] = false;
+            data.user_profile['coapplicant_existing_loan_amount'] = 0;
+          } else {
+            data.user_profile['coapplicant_existing_loan_amount'] = Number(data.user_profile['coapplicant_existing_loan_amount']);
+          }
+        }
+        $('#result').html('<em>Loading...</em>');
+        $.ajax({
+          url: 'https://loanpalpoc-production.up.railway.app/recommend-loan',
+          method: 'POST',
+          contentType: 'application/json',
+          data: JSON.stringify(data.user_profile),
+          success: function(res) {
+            // Save result to localStorage and navigate to report page
+            localStorage.setItem('loan_report', JSON.stringify(res));
+            window.location.href = 'loan_report.html';
+          },
+          error: function(xhr) {
+            $('#result').html('<span style="color:red;">Error: ' + xhr.responseText + '</span>');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loan Recommendation Report</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    body { background: #f8f9fa; }
+    .container { max-width: 800px; margin-top: 40px; background: #fff; border-radius: 10px; box-shadow: 0 2px 8px #0001; padding: 30px; }
+    .section-title { font-weight: bold; margin-top: 24px; }
+    .table { margin-bottom: 0; }
+  </style>
+</head>
+<body>
+  <div class="container" id="report-content">
+    <h2 class="mb-4 text-center">LoanPal Recommendation Report</h2>
+    <div id="report-data"></div>
+    <div class="text-end mt-4">
+      <button class="btn btn-success" id="downloadBtn">Download PDF</button>
+    </div>
+  </div>
+  <script>
+    // Get report data from localStorage
+    const report = JSON.parse(localStorage.getItem('loan_report'));
+    if (!report) {
+      document.getElementById('report-data').innerHTML = '<div class="alert alert-danger">No report data found. Please submit the form first.</div>';
+      document.getElementById('downloadBtn').style.display = 'none';
+    } else {
+      let html = '';
+      html += `<div><b>Name:</b> ${report.name}</div>`;
+      html += `<div><b>Type of Loan:</b> ${report.type_of_loan}</div>`;
+      html += `<div><b>Address:</b> ${report.address}</div>`;
+      html += `<div><b>Loan Amount:</b> ${report.loan_amount}</div>`;
+      html += `<div><b>Date:</b> ${report.date}</div>`;
+      html += `<div class='section-title'>Eligible Banks</div>`;
+      html += `<table class='table table-bordered'><thead><tr><th>Bank</th><th>Interest Rate</th><th>Loan Amount</th><th>Tenure</th><th>EMI</th></tr></thead><tbody>`;
+      (report.eligible_banks || []).forEach(b => {
+        html += `<tr><td>${b.bank}</td><td>${b.interest_rate}</td><td>${b.loan_amount}</td><td>${b.tenure}</td><td>${b.emi}</td></tr>`;
+      });
+      html += `</tbody></table>`;
+      html += `<div class='section-title'>Enhancement Insights</div><ul>`;
+      (report.enhancement_insights || []).forEach(i => {
+        html += `<li>${i}</li>`;
+      });
+      html += `</ul>`;
+      html += `<div class='section-title'>Total EMI</div><div><b>${report.total_emi}</b></div>`;
+      document.getElementById('report-data').innerHTML = html;
+    }
+
+    document.getElementById('downloadBtn').onclick = function() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      let y = 15;
+      doc.setFontSize(16);
+      doc.text('Loan Recommendation Report', 105, y, { align: 'center' });
+      y += 10;
+      doc.setFontSize(12);
+      doc.text(`Name: ${report.name}`, 10, y); y += 8;
+      doc.text(`Type of Loan: ${report.type_of_loan}`, 10, y); y += 8;
+      doc.text(`Address: ${report.address}`, 10, y); y += 8;
+      doc.text(`Loan Amount: ${report.loan_amount}`, 10, y); y += 8;
+      doc.text(`Date: ${report.date}`, 10, y); y += 10;
+      doc.setFontSize(13);
+      doc.text('Eligible Banks:', 10, y); y += 7;
+      doc.setFontSize(11);
+      (report.eligible_banks || []).forEach(b => {
+        doc.text(`- ${b.bank} | Rate: ${b.interest_rate} | Amount: ${b.loan_amount} | Tenure: ${b.tenure} | EMI: ${b.emi}`, 12, y);
+        y += 6;
+      });
+      y += 4;
+      doc.setFontSize(13);
+      doc.text('Enhancement Insights:', 10, y); y += 7;
+      doc.setFontSize(11);
+      (report.enhancement_insights || []).forEach(i => {
+        doc.text(`- ${i}`, 12, y); y += 6;
+      });
+      y += 4;
+      doc.setFontSize(13);
+      doc.text('Total EMI:', 10, y); y += 7;
+      doc.setFontSize(12);
+      doc.text(`${report.total_emi}`, 12, y);
+      doc.save('loan_recommendation_report.pdf');
+    };
+  </script>
+</body>
+</html>
