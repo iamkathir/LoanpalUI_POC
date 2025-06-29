@@ -35,9 +35,40 @@
       html += `<div><b>Loan Amount:</b> ${report.loan_amount}</div>`;
       html += `<div><b>Date:</b> ${report.date}</div>`;
       html += `<div class='section-title'>Eligible Banks</div>`;
-      html += `<table class='table table-bordered'><thead><tr><th>Bank</th><th>Interest Rate</th><th>Loan Amount</th><th>Tenure</th><th>EMI</th></tr></thead><tbody>`;
-      (report.eligible_banks || []).forEach(b => {
-        html += `<tr><td>${b.bank}</td><td>${b.interest_rate}</td><td>${b.loan_amount}</td><td>${b.tenure}</td><td>${b.emi}</td></tr>`;
+      html += `<table class='table table-bordered'><thead><tr><th>Bank</th><th>Eligible</th><th>Remarks</th><th>Loan Amount</th><th>Tenure</th><th>Monthly EMI</th><th>ROI</th><th>Show EMI Schedule</th></tr></thead><tbody>`;
+      (report.eligible_banks || []).forEach((b, idx) => {
+        html += `<tr>
+          <td>${b.bank}</td>
+          <td>${b.eligible ? 'Yes' : 'No'}</td>
+          <td>${b.remarks}</td>
+          <td>${b.loan_amount}</td>
+          <td>${b.tenure}</td>
+          <td>${b.emi}</td>
+          <td>${b.roi || '-'}</td>
+          <td><button class="btn btn-sm btn-info" type="button" data-bs-toggle="collapse" data-bs-target="#amort${idx}">Show</button></td>
+        </tr>
+        <tr class="collapse" id="amort${idx}">
+          <td colspan="8">
+            <div style="max-height:300px;overflow:auto;">
+              <table class="table table-sm table-striped">
+                <thead>
+                  <tr><th>Month</th><th>EMI</th><th>Principal Paid</th><th>Interest Paid</th><th>Balance</th></tr>
+                </thead>
+                <tbody>
+                  ${(b.amortization_schedule || []).map(row =>
+                    `<tr>
+                      <td>${row.month}</td>
+                      <td>${row.emi}</td>
+                      <td>${row.principal_paid}</td>
+                      <td>${row.interest_paid}</td>
+                      <td>${row.balance}</td>
+                    </tr>`
+                  ).join('')}
+                </tbody>
+              </table>
+            </div>
+          </td>
+        </tr>`;
       });
       html += `</tbody></table>`;
       html += `<div class='section-title'>Enhancement Insights</div><ul>`;
@@ -66,8 +97,13 @@
       doc.text('Eligible Banks:', 10, y); y += 7;
       doc.setFontSize(11);
       (report.eligible_banks || []).forEach(b => {
-        doc.text(`- ${b.bank} | Rate: ${b.interest_rate} | Amount: ${b.loan_amount} | Tenure: ${b.tenure} | EMI: ${b.emi}`, 12, y);
+        doc.text(`- ${b.bank} | Eligible: ${b.eligible ? 'Yes' : 'No'} | Remarks: ${b.remarks} | Loan Amount: ${b.loan_amount} | Tenure: ${b.tenure} | EMI: ${b.emi} | ROI: ${b.roi || '-'}`, 12, y);
         y += 6;
+        (b.amortization_schedule || []).forEach(row => {
+          doc.text(`  - Month ${row.month}: EMI: ${row.emi}, Principal: ${row.principal_paid}, Interest: ${row.interest_paid}, Balance: ${row.balance}`, 14, y);
+          y += 5;
+        });
+        y += 4;
       });
       y += 4;
       doc.setFontSize(13);
