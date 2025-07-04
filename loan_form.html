@@ -18,154 +18,66 @@
   <div class="container">
     <h2 class="mb-4 text-center">Best Bank Loan Credit Engine</h2>
     <form id="loanForm">
-      <h5 class="mb-3 mt-2">Applicant Details</h5>
       <div class="mb-3">
         <label class="form-label">Name</label>
-        <input name="applicant_name" class="form-control" required />
+        <input name="name" class="form-control" required />
       </div>
       <div class="mb-3">
-        <label class="form-label">Age</label>
-        <input name="applicant_age" type="number" class="form-control" required />
+        <label class="form-label">Phone Number</label>
+        <input name="phone_number" class="form-control" required />
       </div>
       <div class="mb-3">
-        <label class="form-label">CIBIL Score</label>
-        <input name="applicant_cibil_score" type="number" class="form-control" required />
+        <label class="form-label">Type of Loan</label>
+        <input name="type_of_loan" class="form-control" required />
       </div>
       <div class="mb-3">
-        <label class="form-label">Income Type</label>
-        <select name="applicant_income_type" class="form-select" required>
-          <option value="">Select</option>
-          <option value="salaried">Salaried</option>
-          <option value="business">Business</option>
+        <label class="form-label">Address</label>
+        <input name="address" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Loan Amount</label>
+        <input name="loan_amount" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Date</label>
+        <input name="date" type="date" class="form-control" required />
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Employment Type</label>
+        <select name="employment_type" class="form-select" required>
+          <option value="">Select Employment Type</option>
+          <option value="Salaried">Salaried</option>
+          <option value="Self-Employed">Self-Employed</option>
         </select>
       </div>
       <div class="mb-3">
-        <label class="form-label">Income Mode</label>
-        <select name="applicant_income_mode" class="form-select" required>
-          <option value="">Select</option>
-          <option value="account">Account</option>
-          <option value="cash">Cash</option>
-        </select>
+        <label class="form-label">Monthly Income</label>
+        <input name="monthly_income" type="number" class="form-control" required />
       </div>
-      <div class="mb-3">
-        <label class="form-label">Income Amount</label>
-        <input name="applicant_income_amount" type="number" class="form-control" required />
-      </div>
-      <div id="applicantBusinessFields" style="display:none;">
-        <div class="mb-3">
-          <label class="form-label">Years of Operation</label>
-          <input name="applicant_business_years_of_operation" type="number" class="form-control" />
-        </div>
-        <div class="mb-3">
-          <label class="form-label">ITR Available</label>
-          <select name="applicant_business_itr_available" class="form-select">
-            <option value="">Select</option>
-            <option value="true">Yes</option>
-            <option value="false">No</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">ITR Years</label>
-          <input name="applicant_business_itr_years" type="number" class="form-control" />
-        </div>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Existing Loan Amount</label>
-        <input name="applicant_existing_loan_amount" type="number" class="form-control" />
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Existing Loan EMI</label>
-        <input name="applicant_existing_loan_emi" type="number" class="form-control" />
-      </div>
-      <h5 class="mb-3 mt-4">Loan Details</h5>
-      <div class="mb-3">
-        <label class="form-label">Loan Type</label>
-        <select name="loan_type" class="form-select" required>
-          <option value="">Select</option>
-          <option value="home_loan">Home Loan</option>
-          <option value="loan_against_property">Loan Against Property</option>
-        </select>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Property Value</label>
-        <input name="property_value" type="number" class="form-control" required />
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Property Approval</label>
-        <select name="property_approval" class="form-select" required>
-          <option value="">Select</option>
-          <option value="DTCP">DTCP</option>
-          <option value="Plan Approval">Plan Approval</option>
-          <option value="None">None</option>
-        </select>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Requested Loan Amount</label>
-        <input name="loan_amount_requested" type="number" class="form-control" required />
-      </div>
-      <h5 class="mb-3 mt-4">Co-applicant Details</h5>
       <div class="form-check mb-3">
-        <input name="coapplicant_exists" type="checkbox" class="form-check-input" id="coapplicantExistsCheck" />
-        <label class="form-check-label" for="coapplicantExistsCheck">Co-applicant Exists</label>
+        <input name="existing_loan" type="checkbox" class="form-check-input" id="existingLoanCheck" />
+        <label class="form-check-label" for="existingLoanCheck">Existing Loan</label>
+      </div>
+      <div class="mb-3" id="existingLoanAmountDiv" style="display:none;">
+        <label class="form-label">Existing Loan Amount</label>
+        <input name="existing_loan_amount" type="number" class="form-control" />
+      </div>
+      <div class="form-check mb-3">
+        <input name="has_coapplicant" type="checkbox" class="form-check-input" id="hasCoapplicantCheck" />
+        <label class="form-check-label" for="hasCoapplicantCheck">Co-applicant</label>
       </div>
       <div id="coapplicantFields" style="display:none;">
         <div class="mb-3">
-          <label class="form-label">Income Type</label>
-          <select name="coapplicant_income_type" class="form-select">
-            <option value="">Select</option>
-            <option value="salaried">Salaried</option>
-            <option value="business">Business</option>
-          </select>
+          <label class="form-label">Co-applicant Monthly Income</label>
+          <input name="coapplicant_monthly_income" type="number" class="form-control" />
         </div>
-        <div class="mb-3">
-          <label class="form-label">Income Mode</label>
-          <select name="coapplicant_income_mode" class="form-select">
-            <option value="">Select</option>
-            <option value="account">Account</option>
-            <option value="cash">Cash</option>
-          </select>
+        <div class="form-check mb-3">
+          <input name="coapplicant_existing_loan" type="checkbox" class="form-check-input" id="coapplicantExistingLoanCheck" />
+          <label class="form-check-label" for="coapplicantExistingLoanCheck">Co-applicant has Existing Loan</label>
         </div>
-        <div class="mb-3">
-          <label class="form-label">Income Amount</label>
-          <input name="coapplicant_income_amount" type="number" class="form-control" />
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Salary Type</label>
-          <select name="coapplicant_salary_type" class="form-select">
-            <option value="">Select</option>
-            <option value="salary">Salary</option>
-            <option value="business">Business</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Existing EMI</label>
-          <input name="coapplicant_existing_emi" type="number" class="form-control" />
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Missing/Late Payments</label>
-          <select name="coapplicant_missing_or_late_payment" class="form-select">
-            <option value="">Select</option>
-            <option value="true">Yes</option>
-            <option value="false">No</option>
-          </select>
-        </div>
-        <div id="coapplicantBusinessFields" style="display:none;">
-          <div class="mb-3">
-            <label class="form-label">Years of Operation</label>
-            <input name="coapplicant_business_years_of_operation" type="number" class="form-control" />
-          </div>
-          <div class="mb-3">
-            <label class="form-label">ITR Available</label>
-            <select name="coapplicant_business_itr_available" class="form-select">
-              <option value="">Select</option>
-              <option value="true">Yes</option>
-              <option value="false">No</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">ITR Years</label>
-            <input name="coapplicant_business_itr_years" type="number" class="form-control" />
-          </div>
+        <div class="mb-3" id="coapplicantExistingLoanAmountDiv" style="display:none;">
+          <label class="form-label">Co-applicant Existing Loan Amount</label>
+          <input name="coapplicant_existing_loan_amount" type="number" class="form-control" />
         </div>
       </div>
       <button type="submit" class="btn btn-primary w-100">Get Recommendation</button>
@@ -204,124 +116,53 @@
           $("input[name='coapplicant_existing_loan_amount']").val('').removeAttr('required');
         }
       });
-      // Fix: Show/hide co-applicant fields using the correct checkbox and on page load
-      $('#coapplicantFields').hide();
-      $('#coapplicantExistsCheck').on('change', function() {
-        if ($(this).is(':checked')) {
-          $('#coapplicantFields').slideDown();
-          $("input[name='coapplicant_monthly_income']").attr('required', true);
-        } else {
-          $('#coapplicantFields').slideUp();
-          $("input[name='coapplicant_monthly_income']").val('').removeAttr('required');
-          $("input[name='coapplicant_existing_loan']").prop('checked', false);
-          $('#coapplicantExistingLoanAmountDiv').hide();
-          $("input[name='coapplicant_existing_loan_amount']").val('').removeAttr('required');
-        }
-      });
-      // On page load, ensure correct state
-      if ($('#coapplicantExistsCheck').is(':checked')) {
-        $('#coapplicantFields').show();
-      } else {
-        $('#coapplicantFields').hide();
-      }
       $('#loanForm').on('submit', function(e) {
         e.preventDefault();
         var form = $(this).serializeArray();
-        var data = {
-          applicant: {
-            business_details: {},
-            existing_loan: {}
-          },
-          loan_details: {},
-          co_applicant: {
-            business_details: {},
-            existing_loan: {}
-          }
-        };
+        var data = { user_profile: {} };
         form.forEach(function(item) {
-          // Applicant fields
-          if (item.name.startsWith('applicant_')) {
-            if (item.name.includes('business_')) {
-              var key = item.name.replace('applicant_business_', '');
-              data.applicant.business_details[key] = item.value ? (item.value === 'true' ? true : item.value === 'false' ? false : item.value) : null;
-            } else if (item.name.includes('existing_loan_amount')) {
-              data.applicant.existing_loan.loan_amount = Number(item.value) || 0;
-            } else if (item.name.includes('existing_loan_emi')) {
-              data.applicant.existing_loan.monthly_emi = Number(item.value) || 0;
-            } else {
-              var key = item.name.replace('applicant_', '');
-              data.applicant[key] = item.value ? (item.value === 'true' ? true : item.value === 'false' ? false : item.value) : null;
-            }
-          }
-          // Loan details
-          else if (item.name.startsWith('loan_')) {
-            var key = item.name.replace('loan_', '');
-            data.loan_details[key] = item.value ? (item.value === 'true' ? true : item.value === 'false' ? false : item.value) : null;
-          }
-          else if (item.name === 'property_value' || item.name === 'property_approval') {
-            data.loan_details[item.name] = item.value ? (item.value === 'true' ? true : item.value === 'false' ? false : item.value) : null;
-          }
-          // Co-applicant fields
-          else if (item.name.startsWith('coapplicant_')) {
-            if (item.name === 'coapplicant_exists') {
-              data.co_applicant.exists = true;
-            } else if (item.name.includes('business_')) {
-              var key = item.name.replace('coapplicant_business_', '');
-              data.co_applicant.business_details[key] = item.value ? (item.value === 'true' ? true : item.value === 'false' ? false : item.value) : null;
-            } else if (item.name.includes('existing_loan_amount')) {
-              data.co_applicant.existing_loan.loan_amount = Number(item.value) || 0;
-            } else if (item.name.includes('existing_loan_emi')) {
-              data.co_applicant.existing_loan.monthly_emi = Number(item.value) || 0;
-            } else if (item.name === 'coapplicant_salary_type') {
-              data.co_applicant.salary_type = item.value;
-            } else if (item.name === 'coapplicant_monthly_income') {
-              data.co_applicant.monthly_income = Number(item.value) || 0;
-            } else if (item.name === 'coapplicant_existing_emi') {
-              data.co_applicant.existing_emi = Number(item.value) || 0;
-            } else if (item.name === 'coapplicant_missing_or_late_payment') {
-              data.co_applicant.missing_or_late_payment = item.value === 'true';
-            } else {
-              var key = item.name.replace('coapplicant_', '');
-              data.co_applicant[key] = item.value ? (item.value === 'true' ? true : item.value === 'false' ? false : item.value) : null;
-            }
+          if (item.name === 'existing_loan') {
+            data.user_profile[item.name] = true;
+          } else if (item.name === 'has_coapplicant') {
+            data.user_profile[item.name] = true;
+          } else if (item.name === 'coapplicant_existing_loan') {
+            data.user_profile[item.name] = true;
+          } else {
+            data.user_profile[item.name] = item.value;
           }
         });
-        // Ensure requested loan amount is mapped correctly
-        data.loan_details.loan_amount_requested = $("input[name='loan_amount_requested']").val() ? Number($("input[name='loan_amount_requested']").val()) : 0;
-        // Set defaults for missing co-applicant
-        if (!data.co_applicant.exists) {
-          data.co_applicant = { exists: false, business_details: {}, existing_loan: {} };
+        if (!data.user_profile['existing_loan']) {
+          data.user_profile['existing_loan'] = false;
+          data.user_profile['existing_loan_amount'] = 0;
+        } else {
+          data.user_profile['existing_loan_amount'] = Number(data.user_profile['existing_loan_amount']);
+        }
+        data.user_profile['monthly_income'] = Number(data.user_profile['monthly_income']);
+        if (!data.user_profile['has_coapplicant']) {
+          data.user_profile['has_coapplicant'] = false;
+          data.user_profile['coapplicant_monthly_income'] = 0;
+          data.user_profile['coapplicant_existing_loan'] = false;
+          data.user_profile['coapplicant_existing_loan_amount'] = 0;
+        } else {
+          data.user_profile['coapplicant_monthly_income'] = Number(data.user_profile['coapplicant_monthly_income']);
+          if (!data.user_profile['coapplicant_existing_loan']) {
+            data.user_profile['coapplicant_existing_loan'] = false;
+            data.user_profile['coapplicant_existing_loan_amount'] = 0;
+          } else {
+            data.user_profile['coapplicant_existing_loan_amount'] = Number(data.user_profile['coapplicant_existing_loan_amount']);
+          }
         }
         $('#result').html('<em>Loading...</em>');
         $.ajax({
           url: 'https://loanpalpoc-production.up.railway.app/full-eligibility',
           method: 'POST',
           contentType: 'application/json',
-          data: JSON.stringify(data),
+          data: JSON.stringify(data.user_profile),
           success: function(res) {
-            var form = data;
-            var report = {
-              name: form.applicant.name || '',
-              type_of_loan: form.loan_details.type === 'home_loan' ? 'Home Loan' : 'Loan Against Property',
-              address: '',
-              loan_amount: form.applicant.existing_loan.loan_amount || '',
-              date: new Date().toISOString().slice(0, 10),
-              eligible_banks: (res.eligible_banks || []).map(function(b) {
-                return {
-                  bank: b.bank,
-                  eligible: b.eligible,
-                  remarks: b.remarks,
-                  loan_amount: b.loan_amount,
-                  emi: b.emi,
-                  tenure: b.tenure,
-                  roi: b.roi || '-',
-                  amortization_schedule: b.amortization_schedule || []
-                };
-              }),
-              enhancement_insights: [],
-              total_emi: ''
-            };
-            localStorage.setItem('loan_report', JSON.stringify(report));
+            // Save result to localStorage and navigate to report page
+            localStorage.setItem('loan_report', JSON.stringify(res));
+            // Save phone number to localStorage for report.html
+            localStorage.setItem('phone_number', data.user_profile.phone_number || '');
             window.location.href = 'loan_report.html';
           },
           error: function(xhr) {
