@@ -34,40 +34,31 @@
       html += `<div><b>Address:</b> ${report.address}</div>`;
       html += `<div><b>Loan Amount:</b> ${report.loan_amount}</div>`;
       html += `<div><b>Date:</b> ${report.date}</div>`;
+      // Show main applicant income mode and ITR status if present
+      if (report.income_mode) {
+        html += `<div><b>Applicant Income Mode:</b> ${report.income_mode}</div>`;
+      }
+      if (typeof report.itr_3years !== 'undefined') {
+        html += `<div><b>Applicant ITR filed for past 3 years?:</b> ${report.itr_3years ? 'Yes' : 'No'}</div>`;
+      }
+      // Show co-applicant income mode and ITR status if present
+      if (report.coapp_income_mode) {
+        html += `<div><b>Co-applicant Income Mode:</b> ${report.coapp_income_mode}</div>`;
+      }
+      if (typeof report.coapp_itr_3years !== 'undefined') {
+        html += `<div><b>Co-applicant ITR filed for past 3 years?:</b> ${report.coapp_itr_3years ? 'Yes' : 'No'}</div>`;
+      }
       html += `<div class='section-title'>Eligible Banks</div>`;
-      html += `<table class='table table-bordered'><thead><tr><th>Bank</th><th>Eligible</th><th>Remarks</th><th>Loan Amount</th><th>Tenure</th><th>Monthly EMI</th><th>ROI</th><th>Show EMI Schedule</th></tr></thead><tbody>`;
+      html += `<table class='table table-bordered'><thead><tr><th>Bank</th><th>Eligible</th><th>Remarks</th><th>Loan Amount</th><th>Tenure</th><th>Monthly EMI</th><th>ROI</th></tr></thead><tbody>`;
       (report.eligible_banks || []).forEach((b, idx) => {
         html += `<tr>
           <td>${b.bank}</td>
-          <td>${b.eligible ? 'Yes' : 'No'}</td>
+          <td>${String(b.eligible).trim().toLowerCase() === 'yes' ? 'Yes' : 'No'}</td>
           <td>${b.remarks}</td>
           <td>${b.loan_amount}</td>
           <td>${b.tenure}</td>
           <td>${b.emi}</td>
           <td>${b.roi || '-'}</td>
-          <td><button class="btn btn-sm btn-info" type="button" data-bs-toggle="collapse" data-bs-target="#amort${idx}">Show</button></td>
-        </tr>
-        <tr class="collapse" id="amort${idx}">
-          <td colspan="8">
-            <div style="max-height:300px;overflow:auto;">
-              <table class="table table-sm table-striped">
-                <thead>
-                  <tr><th>Month</th><th>EMI</th><th>Principal Paid</th><th>Interest Paid</th><th>Balance</th></tr>
-                </thead>
-                <tbody>
-                  ${(b.amortization_schedule || []).map(row =>
-                    `<tr>
-                      <td>${row.month}</td>
-                      <td>${row.emi}</td>
-                      <td>${row.principal_paid}</td>
-                      <td>${row.interest_paid}</td>
-                      <td>${row.balance}</td>
-                    </tr>`
-                  ).join('')}
-                </tbody>
-              </table>
-            </div>
-          </td>
         </tr>`;
       });
       html += `</tbody></table>`;
@@ -76,6 +67,8 @@
         html += `<li>${i}</li>`;
       });
       html += `</ul>`;
+      // Add WhatsApp contact info under Enhancement Insights
+      html += `<div class='mt-3'><b>For any queries and Information kindly reach out via <a href='https://wa.me/918940401576' target='_blank' style='color:#25D366;text-decoration:underline;'>WhatsApp: 8940401576</a></b></div>`;
       html += `<div class='section-title'>Total EMI</div><div><b>${report.total_emi}</b></div>`;
       document.getElementById('report-data').innerHTML = html;
     }
@@ -92,31 +85,42 @@
       doc.text(`Type of Loan: ${report.type_of_loan}`, 10, y); y += 8;
       doc.text(`Address: ${report.address}`, 10, y); y += 8;
       doc.text(`Loan Amount: ${report.loan_amount}`, 10, y); y += 8;
-      doc.text(`Date: ${report.date}`, 10, y); y += 10;
-      doc.setFontSize(13);
-      doc.text('Eligible Banks:', 10, y); y += 7;
-      doc.setFontSize(11);
-      (report.eligible_banks || []).forEach(b => {
-        doc.text(`- ${b.bank} | Eligible: ${b.eligible ? 'Yes' : 'No'} | Remarks: ${b.remarks} | Loan Amount: ${b.loan_amount} | Tenure: ${b.tenure} | EMI: ${b.emi} | ROI: ${b.roi || '-'}`, 12, y);
-        y += 6;
-        (b.amortization_schedule || []).forEach(row => {
-          doc.text(`  - Month ${row.month}: EMI: ${row.emi}, Principal: ${row.principal_paid}, Interest: ${row.interest_paid}, Balance: ${row.balance}`, 14, y);
-          y += 5;
-        });
-        y += 4;
-      });
-      y += 4;
-      doc.setFontSize(13);
-      doc.text('Enhancement Insights:', 10, y); y += 7;
-      doc.setFontSize(11);
-      (report.enhancement_insights || []).forEach(i => {
-        doc.text(`- ${i}`, 12, y); y += 6;
-      });
-      y += 4;
-      doc.setFontSize(13);
-      doc.text('Total EMI:', 10, y); y += 7;
+      doc.text(`Date: ${report.date}`, 10, y); y += 8;
+      // Add main applicant income mode and ITR status if present
+      if (report.income_mode) {
+        doc.text(`Applicant Income Mode: ${report.income_mode}`, 10, y); y += 8;
+      }
+      if (typeof report.itr_3years !== 'undefined') {
+        doc.text(`Applicant ITR filed for past 3 years?: ${report.itr_3years ? 'Yes' : 'No'}`, 10, y); y += 8;
+      }
+      // Add co-applicant income mode and ITR status if present
+      if (report.coapp_income_mode) {
+        doc.text(`Co-applicant Income Mode: ${report.coapp_income_mode}`, 10, y); y += 8;
+      }
+      if (typeof report.coapp_itr_3years !== 'undefined') {
+        doc.text(`Co-applicant ITR filed for past 3 years?: ${report.coapp_itr_3years ? 'Yes' : 'No'}`, 10, y); y += 8;
+      }
+      // Add eligible banks
+      doc.setFontSize(14);
+      doc.text('Eligible Banks', 10, y); y += 10;
       doc.setFontSize(12);
-      doc.text(`${report.total_emi}`, 12, y);
+      (report.eligible_banks || []).forEach(b => {
+        doc.text(`- ${b.bank} (${b.eligible ? 'Eligible' : 'Not Eligible'}): ${b.remarks}`, 10, y); y += 8;
+      });
+      // Add enhancement insights
+      doc.setFontSize(14);
+      doc.text('Enhancement Insights', 10, y); y += 10;
+      doc.setFontSize(12);
+      (report.enhancement_insights || []).forEach(i => {
+        doc.text(`- ${i}`, 10, y); y += 8;
+      });
+      // Add total EMI
+      doc.setFontSize(14);
+      doc.text('Total EMI', 10, y); y += 10;
+      doc.setFontSize(12);
+      doc.text(`${report.total_emi}`, 10, y);
+      y += 8;
+      // Save the PDF
       doc.save('loan_recommendation_report.pdf');
     };
   </script>
