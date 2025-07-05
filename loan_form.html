@@ -55,10 +55,9 @@
           <label class="form-check-label" for="applicantITR3No">No</label>
         </div>
       </div>
-       <div class="mb-3">
+      <div class="mb-3" id="applicantIncomeModeDiv">
         <label class="form-label">Income Mode</label>
         <select name="applicant_income_mode" class="form-select" required>
-          <option value="">Select</option>
           <option value="account">Account</option>
           <option value="cash">Cash</option>
         </select>
@@ -91,6 +90,17 @@
         <input name="applicant_existing_loan_emi" type="number" class="form-control" />
       </div>
       
+      <div class="mb-3">
+        <label class="form-label">Do you have any loan repayment issue?</label><br>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="loan_repayment_issue" id="loanRepaymentIssueNo" value="no" checked>
+          <label class="form-check-label" for="loanRepaymentIssueNo">No</label>
+        </div>
+        <div class="form-check form-check-inline">
+          <input class="form-check-input" type="radio" name="loan_repayment_issue" id="loanRepaymentIssueYes" value="yes">
+          <label class="form-check-label" for="loanRepaymentIssueYes">Yes</label>
+        </div>
+      </div>
       <h5 class="mb-3 mt-4">Loan Details</h5>
       <div class="mb-3">
         <label class="form-label">Loan Type</label>
@@ -149,6 +159,13 @@
             <input class="form-check-input" type="radio" name="coapplicant_itr_3years" id="coapplicantITR3No" value="false">
             <label class="form-check-label" for="coapplicantITR3No">No</label>
           </div>
+        </div>
+        <div class="mb-3" id="coapplicantIncomeModeDiv">
+          <label class="form-label">Income Mode</label>
+          <select name="coapplicant_income_mode" class="form-select" required>
+            <option value="account">Account</option>
+            <option value="cash">Cash</option>
+          </select>
         </div>
         <div class="mb-3">
           <label class="form-label">Income Amount</label>
@@ -261,16 +278,26 @@
       $('#applicantSalaryType').on('change', function() {
         if ($(this).val() === 'business') {
           $('#applicantITR3YearsDiv').slideDown();
+          $('#applicantIncomeModeDiv').slideUp();
+          $("select[name='applicant_income_mode']").val('account'); // Always set to 'account' when hidden
+          $("select[name='applicant_income_mode']").removeAttr('required');
         } else {
           $('#applicantITR3YearsDiv').slideUp();
           $("input[name='applicant_itr_3years']").prop('checked', false);
+          $('#applicantIncomeModeDiv').slideDown();
+          $("select[name='applicant_income_mode']").attr('required', true);
         }
       });
       // On page load, ensure correct state
       if ($('#applicantSalaryType').val() === 'business') {
         $('#applicantITR3YearsDiv').show();
+        $('#applicantIncomeModeDiv').hide();
+        $("select[name='applicant_income_mode']").val('account'); // Always set to 'account' when hidden
+        $("select[name='applicant_income_mode']").removeAttr('required');
       } else {
         $('#applicantITR3YearsDiv').hide();
+        $('#applicantIncomeModeDiv').show();
+        $("select[name='applicant_income_mode']").attr('required', true);
       }
       $('#loanForm').on('submit', function(e) {
         e.preventDefault();
@@ -288,6 +315,11 @@
         };
         form.forEach(function(item) {
           // Applicant fields
+            if (item.name === 'loan_repayment_issue') {
+              
+              data.loan_repayment_issue = (item.value === 'yes') ? true : false;
+            }
+           
           if (item.name === 'phone_number' || item.name === 'applicant_phone_number') {
             data.applicant.phone_number = item.value ? item.value : null;
           } else if (item.name.startsWith('applicant_')) {
@@ -305,6 +337,9 @@
               // Fix: Only set true/false if value is not empty
               if (item.value === 'true') data.applicant.itr_3years = true;
               else if (item.value === 'false') data.applicant.itr_3years = false;
+            } else if (item.name === 'loan_repayment_issue') {
+              data.loan_repayment_issue = (item.value === 'yes');
+              console.log('loan_repayment_issue value:', item.value, '->', data.loan_repayment_issue);
             } else {
               var key = item.name.replace('applicant_', '');
               data.applicant[key] = item.value ? (item.value === 'true' ? true : item.value === 'false' ? false : item.value) : null;
@@ -346,11 +381,19 @@
               var key = item.name.replace('coapplicant_', '');
               data.co_applicant[key] = item.value ? (item.value === 'true' ? true : item.value === 'false' ? false : item.value) : null;
             }
+          
           }
+           
         });
-        // Ensure requested loan amount is mapped correctly
+        // Ensure loan_repayment_issue is always set (default to false if not present)
+        if (typeof data.loan_repayment_issue === 'undefined') {
+          data.loan_repayment_issue = false;
+        }
+      
+        
+        // Ensure requested loan amount is mapped correctl
         data.loan_details.loan_amount_requested = $("input[name='loan_amount_requested']").val() ? Number($("input[name='loan_amount_requested']").val()) : 0;
-        // Set defaults for missing co-applicant
+        //TypeError: unsupported operand type(s) for /: 'dict' and 'int'
         if (!data.co_applicant.exists) {
           data.co_applicant = {
             exists: false,
@@ -362,7 +405,7 @@
         }
         $('#result').html('<em>Loading...</em>');
         $.ajax({
-          url: 'https://loanpalpoc-production.up.railway.app/full-eligibility',
+          url: 'http://localhost:8000/full-eligibility',
           method: 'POST',
           contentType: 'application/json',
           data: JSON.stringify(data),
