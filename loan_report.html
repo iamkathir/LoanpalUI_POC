@@ -49,27 +49,32 @@
         html += `<div><b>Co-applicant ITR filed for past 3 years?:</b> ${report.coapp_itr_3years ? 'Yes' : 'No'}</div>`;
       }
       html += `<div class='section-title'>Eligible Banks</div>`;
-      html += `<table class='table table-bordered'><thead><tr><th>Bank</th><th>Eligible</th><th>Remarks</th><th>Loan Amount</th><th>Tenure</th><th>Monthly EMI</th><th>ROI</th></tr></thead><tbody>`;
+      html += `<table class='table table-bordered'><thead><tr><th>Bank</th><th>Eligible</th><th>Loan Amount</th><th>Tenure</th><th>Monthly EMI</th><th>ROI</th><th>Remarks</th></tr></thead><tbody>`;
       (report.eligible_banks || []).forEach((b, idx) => {
         html += `<tr>
           <td>${b.bank}</td>
           <td>${String(b.eligible).trim().toLowerCase() === 'yes' ? 'Yes' : 'No'}</td>
-          <td>${b.remarks}</td>
           <td>${b.loan_amount}</td>
           <td>${b.tenure}</td>
           <td>${b.emi}</td>
           <td>${b.roi || '-'}</td>
+          <td>${b.remarks}</td>
         </tr>`;
       });
       html += `</tbody></table>`;
-      html += `<div class='section-title'>Enhancement Insights</div><ul>`;
-      (report.enhancement_insights || []).forEach(i => {
-        html += `<li>${i}</li>`;
-      });
-      html += `</ul>`;
-      // Add WhatsApp contact info under Enhancement Insights
-      html += `<div class='mt-3'><b>For any queries and Information kindly reach out via <a href='https://wa.me/918940401576' target='_blank' style='color:#25D366;text-decoration:underline;'>WhatsApp: 8940401576</a></b></div>`;
-      html += `<div class='section-title'>Total EMI</div><div><b>${report.total_emi}</b></div>`;
+      // html += `<div class='section-title'>Enhancement Insights</div>`;
+      // if ((report.enhancement_insights && report.enhancement_insights.length > 0) && !(report.enhancement_insights.length === 1 && report.enhancement_insights[0].toLowerCase().includes('whatsapp'))) {
+      //   html += `<ul class='list-group mb-3'>`;
+      //   report.enhancement_insights.forEach(i => {
+      //     html += `<li class='list-group-item'>${i}</li>`;
+      //   });
+      //   html += `</ul>`;
+      // } else {
+      //   html += `<div class='alert alert-info'>No recommendations at this time. Your profile is strong!</div>`;
+      // }
+      // // Always show WhatsApp contact below recommendations
+      html += `<div class='mt-3'><b>For any feedback and queries , kindly reach out via  <a href='https://wa.me/918940401576' target='_blank' style='color:#25D366;text-decoration:underline;'>WhatsApp: 8940401576</a></b></div>`;
+      
       document.getElementById('report-data').innerHTML = html;
     }
 
