@@ -419,7 +419,7 @@
         }
         $('#result').html('<em>Loading...</em>');
         $.ajax({
-          url: 'http://localhost:8000/full-eligibility',
+          url: 'https://loanpalpoc-production.up.railway.app/full-eligibility',
           method: 'POST',
           contentType: 'application/json',
           data: JSON.stringify(data),
