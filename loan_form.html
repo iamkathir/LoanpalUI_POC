@@ -203,7 +203,21 @@
           </div>
         </div>
       </div>
-      <button type="submit" class="btn btn-primary w-100">Get Recommendation</button>
+      <div class="mb-3 mt-4 p-3 bg-light border rounded">
+        <strong style="color: #d32f2f; font-size: 1.1em; letter-spacing: 0.5px;">Disclaimer:</strong><br>
+        <span style="display: inline-block; background: linear-gradient(90deg, #ffe0e0 0%, #fffbe7 100%); color: #333; font-size: 1em; padding: 8px 12px; border-radius: 8px; margin-top: 4px; font-family: 'Segoe UI', 'Arial', sans-serif; box-shadow: 0 1px 4px #0001;">
+          LoanPal AI is not a bank or lender. We only show sample loan offers based on your inputs and publicly or partner-provided policy data.<br>
+          We do not share your contact details.<br>
+          This is a logic-based tool for information purposes only. Final offers may vary.
+        </span>
+        <div class="form-check mt-2">
+          <input class="form-check-input" type="checkbox" id="disclaimerAgreeCheck">
+          <label class="form-check-label" for="disclaimerAgreeCheck">
+            I understand and agree
+          </label>
+        </div>
+      </div>
+      <button type="submit" class="btn btn-primary w-100" id="getRecommendationBtn" disabled>Get Recommendation</button>
     </form>
     <div id="result" class="result-box"></div>
   </div>
@@ -405,7 +419,7 @@
         }
         $('#result').html('<em>Loading...</em>');
         $.ajax({
-          url: 'https://loanpalpoc-production.up.railway.app/full-eligibility',
+          url: 'http://localhost:8000/full-eligibility',
           method: 'POST',
           contentType: 'application/json',
           data: JSON.stringify(data),
@@ -441,6 +455,16 @@
           }
         });
       });
+      // Disclaimer checkbox logic
+      $('#disclaimerAgreeCheck').on('change', function() {
+        if ($(this).is(':checked')) {
+          $('#getRecommendationBtn').prop('disabled', false);
+        } else {
+          $('#getRecommendationBtn').prop('disabled', true);
+        }
+      });
+      // On page load, ensure button is disabled
+      $('#getRecommendationBtn').prop('disabled', !$('#disclaimerAgreeCheck').is(':checked'));
     });
   </script>
 </body>
