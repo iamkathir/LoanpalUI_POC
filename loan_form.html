@@ -16,6 +16,12 @@
 </head>
 <body>
   <div class="container">
+    <div class="text-center mb-3" style="font-size:1.5em; font-weight:700; color:#388e3c; background:linear-gradient(90deg,#e8f5e9 0%,#fffbe7 100%); border-radius:12px; padding:14px 0; box-shadow:0 2px 8px #0002; letter-spacing:1px;">
+      95% Accuracy Tested with 25+ Customers
+    </div>
+    <div class="text-center mb-2" style="font-size:1.1em; font-weight:500; color:#1976d2; background:linear-gradient(90deg,#e3f2fd 0%,#fffbe7 100%); border-radius:8px; padding:8px 0; box-shadow:0 1px 4px #0001; letter-spacing:0.5px;">
+      ⏱ Takes 2 mins. 🏠 Can save you 2 months of loan processing hassle.
+    </div>
     <h2 class="mb-4 text-center">Best Bank Loan Credit Engine</h2>
     <form id="loanForm">
       <h5 class="mb-3 mt-2">Applicant Details</h5>
@@ -23,10 +29,7 @@
         <label class="form-label">Name</label>
         <input name="applicant_name" class="form-control" required />
       </div>
-      <div class="mb-3">
-        <label class="form-label">Phone Number</label>
-        <input name="phone_number" class="form-control" required />
-      </div>
+     
       <div class="mb-3">
         <label class="form-label">Age</label>
         <input name="applicant_age" type="number" class="form-control" required />
@@ -64,8 +67,12 @@
       </div>
 
       <div class="mb-3">
-        <label class="form-label">Income Amount</label>
-        <input name="applicant_income_amount" type="number" class="form-control" required />
+        <label class="form-label">Income Amount <span style="font-size:0.95em;color:#888;">(Monthly)</span></label>
+        <div class="input-group">
+          <span class="input-group-text" style="background:#e3f2fd;color:#1976d2;font-weight:600;">₹</span>
+          <input name="applicant_income_amount" type="text" class="form-control" id="applicantIncomeAmountInput" required />
+        </div>
+        <div id="applicantIncomeAmountInWords" class="form-text mt-1" style="color:#1976d2;font-weight:500;"></div>
       </div>
       <div id="applicantBusinessFields" style="display:none;">
         <div class="mb-3">
@@ -86,7 +93,7 @@
         </div>
       </div>
       <div class="mb-3">
-        <label class="form-label">Existing Loan EMI</label>
+        <label class="form-label">Existing Loan EMI <span style="font-size:0.95em;color:#888;">(Monthly)</span></label>
         <input name="applicant_existing_loan_emi" type="number" class="form-control" />
       </div>
       
@@ -124,8 +131,12 @@
         </select>
       </div>
       <div class="mb-3">
-        <label class="form-label">Requested Loan Amount</label>
-        <input name="loan_amount_requested" type="number" class="form-control" required />
+        <label class="form-label">Requested Loan Amount <span style="font-size:0.95em;color:#888;">(in Rupees)</span></label>
+        <div class="input-group">
+          <span class="input-group-text" style="background:#e3f2fd;color:#1976d2;font-weight:600;">₹</span>
+          <input name="loan_amount_requested" type="text" class="form-control" id="loanAmountRequestedInput" required />
+        </div>
+        <div id="loanAmountInWords" class="form-text mt-1" style="color:#1976d2;font-weight:500;"></div>
       </div>
       <h5 class="mb-3 mt-4">Co-applicant Details</h5>
       <div class="form-check mb-3">
@@ -168,12 +179,12 @@
           </select>
         </div>
         <div class="mb-3">
-          <label class="form-label">Income Amount</label>
+          <label class="form-label">Income Amount Monthly</label>
           <input name="coapplicant_income_amount" type="number" class="form-control" />
         </div>
         
         <div class="mb-3">
-          <label class="form-label">Existing EMI</label>
+          <label class="form-label">Existing EMI Amount</label>
           <input name="coapplicant_existing_emi" type="number" class="form-control" />
         </div>
         <div class="mb-3">
@@ -202,6 +213,10 @@
             <input name="coapplicant_business_itr_years" type="number" class="form-control" />
           </div>
         </div>
+      </div>
+       <div class="mb-3">
+        <label class="form-label">Phone Number</label>
+        <input name="phone_number" class="form-control" required />
       </div>
       <div class="mb-3 mt-4 p-3 bg-light border rounded">
         <strong style="color: #d32f2f; font-size: 1.1em; letter-spacing: 0.5px;">Disclaimer:</strong><br>
@@ -465,6 +480,52 @@
       });
       // On page load, ensure button is disabled
       $('#getRecommendationBtn').prop('disabled', !$('#disclaimerAgreeCheck').is(':checked'));
+
+      // Loan amount comma separation and in-words display
+      function formatNumberWithCommas(x) {
+        if (!x) return '';
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
+      function numberToWords(num) {
+        if (!num || isNaN(num)) return '';
+        var a = ["", "Thousand", "Lakh", "Crore"];
+        var n = parseInt(num, 10);
+        if (n < 1000) return n + ' Rupees';
+        if (n < 100000) return (n/1000).toFixed(2) + ' Thousand Rupees';
+        if (n < 10000000) return (n/100000).toFixed(2) + ' Lakh Rupees';
+        return (n/10000000).toFixed(2) + ' Crore Rupees';
+      }
+      $('#loanAmountRequestedInput').on('input', function() {
+        var raw = $(this).val().replace(/,/g, '');
+        if (!isNaN(raw) && raw !== '') {
+          var formatted = formatNumberWithCommas(raw);
+          $(this).val(formatted);
+          $('#loanAmountInWords').text(numberToWords(raw));
+        } else {
+          $('#loanAmountInWords').text('');
+        }
+      });
+      // On page load, show in-words if value exists
+      var initialLoanAmt = $('#loanAmountRequestedInput').val().replace(/,/g, '');
+      if (initialLoanAmt) {
+        $('#loanAmountInWords').text(numberToWords(initialLoanAmt));
+      }
+      // Income amount comma separation and in-words display
+      $('#applicantIncomeAmountInput').on('input', function() {
+        var raw = $(this).val().replace(/,/g, '');
+        if (!isNaN(raw) && raw !== '') {
+          var formatted = formatNumberWithCommas(raw);
+          $(this).val(formatted);
+          $('#applicantIncomeAmountInWords').text(numberToWords(raw));
+        } else {
+          $('#applicantIncomeAmountInWords').text('');
+        }
+      });
+      // On page load, show in-words if value exists
+      var initialIncomeAmt = $('#applicantIncomeAmountInput').val().replace(/,/g, '');
+      if (initialIncomeAmt) {
+        $('#applicantIncomeAmountInWords').text(numberToWords(initialIncomeAmt));
+      }
     });
   </script>
 </body>
