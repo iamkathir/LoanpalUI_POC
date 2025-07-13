@@ -118,8 +118,12 @@
         </select>
       </div>
       <div class="mb-3">
-        <label class="form-label">Property Value</label>
-        <input name="property_value" type="number" class="form-control" required />
+        <label class="form-label">Property Value <span style="font-size:0.95em;color:#888;">(in Rupees)</span></label>
+        <div class="input-group">
+          <span class="input-group-text" style="background:#e3f2fd;color:#1976d2;font-weight:600;">₹</span>
+          <input name="property_value" type="text" class="form-control" id="propertyValueInput" required />
+        </div>
+        <div id="propertyValueInWords" class="form-text mt-1" style="color:#1976d2;font-weight:500;"></div>
       </div>
       <div class="mb-3">
         <label class="form-label">Property Approval</label>
@@ -432,6 +436,23 @@
             income_type: ''  // Ensure always present
           };
         }
+        // Remove commas before sending to backend for numeric fields
+        if (data.applicant && data.applicant.income_amount) {
+          data.applicant.income_amount = String(data.applicant.income_amount).replace(/,/g, '');
+        }
+        if (data.loan_details && data.loan_details.loan_amount_requested) {
+          data.loan_details.loan_amount_requested = String(data.loan_details.loan_amount_requested).replace(/,/g, '');
+        }
+        // Remove commas and convert property_value to integer
+        if (data.loan_details && data.loan_details.property_value) {
+          data.loan_details.property_value = parseInt(String(data.loan_details.property_value).replace(/,/g, ''), 10) || 0;
+        }
+        // Also ensure loan_amount_requested is sent as integer
+        if (data.loan_details && data.loan_details.loan_amount_requested) {
+          data.loan_details.loan_amount_requested = parseInt(data.loan_details.loan_amount_requested, 10) || 0;
+        }
+     
+     
         $('#result').html('<em>Loading...</em>');
         $.ajax({
           url: 'https://loanpalpoc-production.up.railway.app/full-eligibility',
@@ -510,6 +531,25 @@
       if (initialLoanAmt) {
         $('#loanAmountInWords').text(numberToWords(initialLoanAmt));
       }
+      // Property value comma separation and in-words display
+
+       $('#propertyValueInput').on('input', function() {
+        var raw = $(this).val().replace(/,/g, '');
+        if (!isNaN(raw) && raw !== '') {
+          var formatted = formatNumberWithCommas(raw);
+          $(this).val(formatted);
+          $('#propertyValueInWords').text(numberToWords(raw));
+        } else {
+          $('#propertyValueInWords').text('');
+        }
+      });
+      // On page load, show in-words if value exists
+      var initialLoanAmt = $('#propertyValueInput').val().replace(/,/g, '');
+      if (initialLoanAmt) {
+        $('#propertyValueInWords').text(numberToWords(initialLoanAmt));
+      }
+
+
       // Income amount comma separation and in-words display
       $('#applicantIncomeAmountInput').on('input', function() {
         var raw = $(this).val().replace(/,/g, '');
