@@ -74,6 +74,14 @@
         </div>
         <div id="applicantIncomeAmountInWords" class="form-text mt-1" style="color:#1976d2;font-weight:500;"></div>
       </div>
+      <div class="mb-3">
+        <label class="form-label">Existing Loan EMI <span style="font-size:0.95em;color:#888;">(Monthly)</span></label>
+        <div class="input-group">
+          <span class="input-group-text" style="background:#e3f2fd;color:#1976d2;font-weight:600;">₹</span>
+          <input name="applicant_existing_loan_emi" type="text" class="form-control" id="applicantExistingLoanEmiInput" />
+        </div>
+        <div id="applicantExistingLoanEmiInWords" class="form-text mt-1" style="color:#1976d2;font-weight:500;"></div>
+      </div>
       <div id="applicantBusinessFields" style="display:none;">
         <div class="mb-3">
           <label class="form-label">Years of Operation</label>
@@ -91,10 +99,6 @@
           <label class="form-label">ITR Years</label>
           <input name="applicant_business_itr_years" type="number" class="form-control" />
         </div>
-      </div>
-      <div class="mb-3">
-        <label class="form-label">Existing Loan EMI <span style="font-size:0.95em;color:#888;">(Monthly)</span></label>
-        <input name="applicant_existing_loan_emi" type="number" class="form-control" />
       </div>
       
       <div class="mb-3">
@@ -440,6 +444,9 @@
         if (data.applicant && data.applicant.income_amount) {
           data.applicant.income_amount = String(data.applicant.income_amount).replace(/,/g, '');
         }
+        if (data.applicant && data.applicant.existing_loan && data.applicant.existing_loan.monthly_emi) {
+          data.applicant.existing_loan.monthly_emi = parseInt(String(data.applicant.existing_loan.monthly_emi).replace(/,/g, ''), 10) || 0;
+        }
         if (data.loan_details && data.loan_details.loan_amount_requested) {
           data.loan_details.loan_amount_requested = String(data.loan_details.loan_amount_requested).replace(/,/g, '');
         }
@@ -565,6 +572,22 @@
       var initialIncomeAmt = $('#applicantIncomeAmountInput').val().replace(/,/g, '');
       if (initialIncomeAmt) {
         $('#applicantIncomeAmountInWords').text(numberToWords(initialIncomeAmt));
+      }
+      // Existing Loan EMI comma separation and in-words display
+      $('#applicantExistingLoanEmiInput').on('input', function() {
+        var raw = $(this).val().replace(/,/g, '');
+        if (!isNaN(raw) && raw !== '') {
+          var formatted = formatNumberWithCommas(raw);
+          $(this).val(formatted);
+          $('#applicantExistingLoanEmiInWords').text(numberToWords(raw));
+        } else {
+          $('#applicantExistingLoanEmiInWords').text('');
+        }
+      });
+      // On page load, show in-words if value exists
+      var initialEmiAmt = $('#applicantExistingLoanEmiInput').val().replace(/,/g, '');
+      if (initialEmiAmt) {
+        $('#applicantExistingLoanEmiInWords').text(numberToWords(initialEmiAmt));
       }
     });
   </script>
