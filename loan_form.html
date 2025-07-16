@@ -356,6 +356,11 @@
               
               data.loan_repayment_issue = (item.value === 'yes') ? true : false;
             }
+            if (item.name === 'coapplicant_missing_or_late_payment') {
+              
+              data.coapplicant_loan_repayment_issue = (item.value === 'true') ? true : false;
+            }
+            
            
           if (item.name === 'phone_number' || item.name === 'applicant_phone_number') {
             data.applicant.phone_number = item.value ? item.value : null;
@@ -463,6 +468,7 @@
         $('#result').html('<em>Loading...</em>');
         $.ajax({
           url: 'https://loanpalpoc-production.up.railway.app/full-eligibility',
+         // url: 'http://127.0.0.1:8000/full-eligibility',
           method: 'POST',
           contentType: 'application/json',
           data: JSON.stringify(data),
